@@ -28,11 +28,6 @@ function makeBookCard(book, index) {
     bookCard.classList.add("book-card")
 
     bookCard.dataset.index = index;
-    //temp index for debugging
-    // const bookIndex = document.createElement("p");
-    // bookIndex.textContent = `${bookCard.dataset.index}`;
-    // bookCard.appendChild(bookIndex);
-    //done
 
     const bookText = document.createElement("div");
     const bookButtons = document.createElement("div");
@@ -45,18 +40,25 @@ function makeBookCard(book, index) {
     bookText.appendChild(bookTitle);
 
     const bookAuthor = document.createElement("h3");
-    bookAuthor.textContent = `${book.author}`;
+    bookAuthor.textContent = `By ${book.author}`;
     bookText.appendChild(bookAuthor);
 
     const bookPages = document.createElement("p");
-    bookPages.textContent = `${book.pages}`;
+    bookPages.textContent = `${book.pages} Pages`;
     bookText.appendChild(bookPages);
 
+    const bookRead = document.createElement("p");
+    bookRead.textContent = book.read ? "Read" : "In Progress";
+    bookText.appendChild(bookRead);
+
     const bookReadButton = document.createElement("button");
-    bookReadButton.textContent = book.read ? "Read" : "In Progress";
+    bookReadButton.classList.add("book-button");
+    bookReadButton.textContent = book.read ? "Mark Incomplete" : "Mark Complete";
     bookButtons.appendChild(bookReadButton);
 
     const bookDeleteButton = document.createElement("button");
+    bookDeleteButton.classList.add("book-button");
+    bookDeleteButton.classList.add("red-button");
     bookDeleteButton.textContent = "Remove";
     bookButtons.appendChild(bookDeleteButton);
 
@@ -100,6 +102,7 @@ function makeAddBookCard() {
     addBookText.innerText = "Add Book";
     const addBookPlus = document.createElement("p");
     addBookPlus.innerText = "+";
+
     addBookCard.appendChild(addBookText);
     addBookCard.appendChild(addBookPlus);
     libraryDiv.appendChild(addBookCard);
