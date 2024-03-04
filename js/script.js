@@ -1,6 +1,9 @@
 const myLibrary = [];
 const libraryDiv = document.querySelector(".library");
 const submitButton = document.querySelector(".submit-button");
+const bookFormDialog = document.querySelector(".form-dialog");
+const bookForm = document.querySelector(".book-form");
+const formCancel = document.querySelector(".cancel-button");
 
 function Book(title, author, pages, read){
     this.title = title;
@@ -8,36 +11,67 @@ function Book(title, author, pages, read){
     this.pages = pages;
     this.read = read;
 }
+Book.prototype.toggleReadStatus = function() {
+    this.read = !(this.read);
+}
 
 function addBookToLibrary(book) {
     myLibrary.push(book);
 }
 
+function removeBookFromLibrary(index) {
+    myLibrary.splice(index, 1);
+}
+
 function makeBookCard(book, index) {
     const bookCard = document.createElement("div");
+    bookCard.classList.add("book-card")
 
     bookCard.dataset.index = index;
-
     //temp index for debugging
-    const bookIndex = document.createElement("p");
-    bookIndex.textContent = `${bookCard.dataset.index}`;
-    bookCard.appendChild(bookIndex);
+    // const bookIndex = document.createElement("p");
+    // bookIndex.textContent = `${bookCard.dataset.index}`;
+    // bookCard.appendChild(bookIndex);
+    //done
+
+    const bookText = document.createElement("div");
+    const bookButtons = document.createElement("div");
+
+    bookText.classList.add("book-text");
+    bookButtons.classList.add("book-buttons");
         
     const bookTitle = document.createElement("h2");
     bookTitle.textContent = `${book.title}`;
-    bookCard.appendChild(bookTitle);
+    bookText.appendChild(bookTitle);
 
-    const bookAuthor = document.createElement("h2");
+    const bookAuthor = document.createElement("h3");
     bookAuthor.textContent = `${book.author}`;
-    bookCard.appendChild(bookAuthor);
+    bookText.appendChild(bookAuthor);
 
     const bookPages = document.createElement("p");
     bookPages.textContent = `${book.pages}`;
-    bookCard.appendChild(bookPages);
+    bookText.appendChild(bookPages);
 
-    const bookRead = document.createElement("p");
-    bookRead.textContent = `${book.read}`;
-    bookCard.appendChild(bookRead);
+    const bookReadButton = document.createElement("button");
+    bookReadButton.textContent = book.read ? "Read" : "In Progress";
+    bookButtons.appendChild(bookReadButton);
+
+    const bookDeleteButton = document.createElement("button");
+    bookDeleteButton.textContent = "Remove";
+    bookButtons.appendChild(bookDeleteButton);
+
+    bookCard.appendChild(bookText);
+    bookCard.appendChild(bookButtons);
+
+    bookReadButton.addEventListener('click', () => {
+        book.toggleReadStatus();
+        displayLibrary();
+    } )
+
+    bookDeleteButton.addEventListener('click', () => {
+        removeBookFromLibrary(bookCard.dataset.index);
+        displayLibrary();
+    } )
 
     return bookCard;
 }
@@ -59,21 +93,44 @@ function clearForm(){
     document.querySelector(".book-read").checked = false;
 }
 
+function makeAddBookCard() {
+    const addBookCard = document.createElement("div");
+    addBookCard.classList.add("add-card");
+    const addBookText = document.createElement("h2");
+    addBookText.innerText = "Add Book";
+    const addBookPlus = document.createElement("p");
+    addBookPlus.innerText = "+";
+    addBookCard.appendChild(addBookText);
+    addBookCard.appendChild(addBookPlus);
+    libraryDiv.appendChild(addBookCard);
+    
+    addBookCard.addEventListener("click", () => {
+        bookFormDialog.showModal();
+    });
+}
+
 function displayLibrary() {
     libraryDiv.innerHTML = "";
     myLibrary.forEach((book, index) => {
         const bookCard = makeBookCard(book, index);
         libraryDiv.appendChild(bookCard);
     });
+    makeAddBookCard();
 }
 
-submitButton.addEventListener("click", (event) => {
+bookForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const book = makeBookForm();
     addBookToLibrary(book);
+    bookFormDialog.close();
     displayLibrary();
 });
 
-testBook = new Book("testTitle", "testAuthor", 32, "testRead");
+formCancel.addEventListener("click", () => {
+    clearForm();
+    bookFormDialog.close();
+});
+
+testBook = new Book("testTitle", "testAuthor", 32, true);
 addBookToLibrary(testBook);
 displayLibrary();
